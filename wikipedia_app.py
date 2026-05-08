@@ -9,6 +9,7 @@ from PIL import Image, ImageTk
 # Configurar modo escuro por padrão
 ctk.set_appearance_mode("dark")  # "light", "dark", "system"
 ctk.set_default_color_theme("dark-blue")  # "blue", "dark-blue", "green"
+wikipedia.set_lang("pt")
 
 class WikipediaApp(ctk.CTk):
     def __init__(self):
@@ -23,8 +24,8 @@ class WikipediaApp(ctk.CTk):
         self.historico = []
         
         # Variáveis de controle
-        self.current_search = None
-        self.is_searching = False
+        self.busca_atual = None
+        self.buscando = False
         
         # Criar interface
         self.load_images()
@@ -107,7 +108,7 @@ class WikipediaApp(ctk.CTk):
             font=("Segoe UI", 12)
         )
         self.campo_busca.pack(side="left", fill="x", expand=True, padx=(0, 5))
-        self.campo_busca.bind("<Return>", lambda e: self.search_wikipedia())
+        self.campo_busca.bind("<Return>", lambda e: self.busca_wikipedia())
         
         # Botão de busca
         busca_btn = ctk.CTkButton(
@@ -117,7 +118,8 @@ class WikipediaApp(ctk.CTk):
             compound="left",
             width=100,
             height=40,
-            font=("Segoe UI", 12, "bold")
+            font=("Segoe UI", 12, "bold"),
+            command=self.busca_wikipedia
         )
         busca_btn.pack(side="left")
         
@@ -139,7 +141,7 @@ class WikipediaApp(ctk.CTk):
                 height=32,
                 corner_radius=12,
                 font=("Arial", 11, "bold"),
-                
+                #command=lambda termo=nome_busca:,
                 hover_color="#144870",
                 border_width=1,
                 border_color=ctk.ThemeManager.theme["CTkButton"]["fg_color"]
@@ -199,6 +201,78 @@ class WikipediaApp(ctk.CTk):
         )
         clear_btn.pack(side="left", padx=5)
     
+
+    def busca_wikipedia(self):
+        """Buscar na Wikipédia"""
+        texto_busca = self.campo_busca.get().strip()
+        
+        if not texto_busca:
+            messagebox.showwarning("Aviso", "Digite um termo para buscar!")
+            return
+        
+        if self.buscando:
+            messagebox.showinfo("Aviso", "Uma busca já está em andamento...")
+            return
+        
+        # Executar busca em thread separada para não congelar a UI
+        thread = threading.Thread(target=self._perform_search, args=(texto_busca,))
+        thread.daemon = True
+        thread.start()
+
+    def _perform_search(self, busca_termo):
+        """Realizar a busca (em thread separada)"""
+        self.buscando = True
+        self.resultado_texto.delete("1.0", tk.END)
+        self.resultado_texto.insert("1.0", "🔄 Buscando...\n")
+        
+        try:
+            # Buscar na Wikipédia
+            resultado = wikipedia.search(busca_termo, results=5)
+            
+            if not resultado:
+                self.resultado_texto.delete("1.0", tk.END)
+                self.resultado_texto.insert("1.0", "❌ Nenhum resultado encontrado para: " + busca_termo)
+                return
+            
+            # Obter o primeiro resultado
+            page = wikipedia.page(resultado[0])
+            
+            # Adicionar ao histórico
+            #self.add_to_history(page.title)
+            
+            # Armazenar busca atual
+            self.busca_atual = {
+                "title": page.title,
+                "url": page.url,
+                "summary": page.summary
+            }
+            
+            # Exibir resultado
+            resultado_texto = f"📖 TÍTULO: {page.title}\n"
+            resultado_texto += f"🔗 URL: {page.url}\n"
+            resultado_texto += "=" * 80 + "\n\n"
+            resultado_texto += f"RESUMO:\n{page.summary}\n\n"
+            resultado_texto += "=" * 80 + "\n"
+            resultado_texto += f"\n📚 Outros resultados encontrados:\n"
+            
+            for i, result in enumerate(resultado[1:], 1):
+                resultado_texto += f"{i}. {result}\n"
+            
+            self.resultado_texto.delete("1.0", tk.END)
+            self.resultado_texto.insert("1.0", resultado_texto)
+        
+        except wikipedia.exceptions.PageError:
+            self.resultado_texto.delete("1.0", tk.END)
+            self.resultado_texto.insert("1.0", f"❌ Página não encontrada para: {busca_termo}")
+        
+        except Exception as e:
+            self.resultado_texto.delete("1.0", tk.END)
+            self.resultado_texto.insert("1.0", f"❌ Erro ao buscar: {str(e)}")
+        
+        finally:
+            self.buscando = False   
+
+
 
 if __name__ == "__main__":
     app = WikipediaApp()
