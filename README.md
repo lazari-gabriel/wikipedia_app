@@ -101,8 +101,6 @@ wikipedia-search-app/
 ├── requirements.txt          # Dependências do projeto
 ├── README.md                 # Este arquivo
 ├── LICENSE                   # Licença MIT
-├── .gitignore                # Arquivos ignorados no Git
-├── CONTRIBUTING.md           # Guia de contribuição
 └── imgs/                     # Pasta com ícones
     ├── icon_search.png            # Ícone de busca
     ├── icon_history.png           # Ícone de histórico
