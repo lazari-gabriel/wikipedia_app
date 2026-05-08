@@ -104,9 +104,9 @@ wikipedia-search-app/
 ├── .gitignore                # Arquivos ignorados no Git
 ├── CONTRIBUTING.md           # Guia de contribuição
 └── imgs/                     # Pasta com ícones
-    ├── search.png            # Ícone de busca
-    ├── history.png           # Ícone de histórico
-    └── settings.png          # Ícone de configurações
+    ├── icon_search.png            # Ícone de busca
+    ├── icon_history.png           # Ícone de histórico
+    └── icon_settings.png          # Ícone de configurações
 ```
 
 ---
@@ -175,9 +175,9 @@ O aplicativo carrega ícones PNG da pasta `imgs/`:
 
 | Arquivo | Descrição | Tamanho Recomendado |
 | --- | --- | --- |
-| `search.png` | Ícone de Busca (Lupa) | 60x60px ou maior |
-| `history.png` | Ícone de Histórico (Livro) | 60x60px ou maior |
-| `settings.png` | Ícone de Configurações (Engrenagem) | 60x60px ou maior |
+| `icon_search.png` | Ícone de Busca (Lupa) | 60x60px ou maior |
+| `icon_history.png` | Ícone de Histórico (Livro) | 60x60px ou maior |
+| `icon_settings.png` | Ícone de Configurações (Engrenagem) | 60x60px ou maior |
 
 **Nota:** Os ícones são redimensionados automaticamente para 60x60px. Use imagens com fundo transparente para melhor resultado!
 
