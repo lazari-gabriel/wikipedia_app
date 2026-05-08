@@ -184,13 +184,13 @@ class WikipediaApp(ctk.CTk):
         btn_frame.pack(fill="x", padx=10, pady=10 )
         
         # Botão para copiar
-        copy_btn = ctk.CTkButton(
+        copiar_btn = ctk.CTkButton(
             btn_frame,
             text="📋 Copiar Texto",
             height=30,
             font=("Arial", 12, "bold")
         )
-        copy_btn.pack(side="left", padx=5)
+        copiar_btn.pack(side="left", padx=5)
         
         # Botão para limpar
         clear_btn = ctk.CTkButton(
@@ -215,11 +215,11 @@ class WikipediaApp(ctk.CTk):
             return
         
         # Executar busca em thread separada para não congelar a UI
-        thread = threading.Thread(target=self._perform_search, args=(texto_busca,))
+        thread = threading.Thread(target=self.realizar_busca, args=(texto_busca,))
         thread.daemon = True
         thread.start()
 
-    def _perform_search(self, busca_termo):
+    def realizar_busca(self, busca_termo):
         """Realizar a busca (em thread separada)"""
         self.buscando = True
         self.resultado_texto.delete("1.0", tk.END)
@@ -227,9 +227,9 @@ class WikipediaApp(ctk.CTk):
         
         try:
             # Buscar na Wikipédia
-            resultado = wikipedia.search(busca_termo, results=5)
+            resultados = wikipedia.search(busca_termo, results=5)
             
-            if not resultado:
+            if not resultados:
                 self.resultado_texto.delete("1.0", tk.END)
                 self.resultado_texto.insert("1.0", "❌ Nenhum resultado encontrado para: " + busca_termo)
                 return
@@ -237,7 +237,7 @@ class WikipediaApp(ctk.CTk):
             # Obter o primeiro resultado
             page = wikipedia.page(resultado[0])
             
-            # Adicionar ao histórico
+            # Adicionar ao histórico em teste
             #self.add_to_history(page.title)
             
             # Armazenar busca atual
@@ -255,8 +255,14 @@ class WikipediaApp(ctk.CTk):
             resultado_texto += "=" * 80 + "\n"
             resultado_texto += f"\n📚 Outros resultados encontrados:\n"
             
-            for i, result in enumerate(resultado[1:], 1):
-                resultado_texto += f"{i}. {result}\n"
+            contador = 1
+
+            for resultado in resultados[1:]: 
+                resultado_texto += f"{contador}. {resultado}\n"
+                contador += 1
+
+           # for i, result in enumerate(resultado[1:], 1): # Começa do segundo resultado, enumerate começa do 1
+                #resultado_texto += f"{i}. {result}\n"
             
             self.resultado_texto.delete("1.0", tk.END)
             self.resultado_texto.insert("1.0", resultado_texto)
@@ -271,7 +277,13 @@ class WikipediaApp(ctk.CTk):
         
         finally:
             self.buscando = False   
-
+    # def copiar_texto(self):
+    #     try:
+    #         texto = self.resultado_texto.get("1.0", tk.END).strip()
+    #         if texto:
+                
+    #         else:
+               
 
 
 if __name__ == "__main__":
