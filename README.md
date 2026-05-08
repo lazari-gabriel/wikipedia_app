@@ -314,8 +314,6 @@ Se tiver dúvidas ou sugestões:
 
 1. Deixe um **comentário** em uma Pull Request
 
-1. Verifique a seção **Troubleshooting** acima
-
 ---
 
 ## 🎉 Agradecimentos
@@ -334,7 +332,7 @@ Se tiver dúvidas ou sugestões:
 
 - **Dependências**: 3
 
-- **Versão**: 5.0
+- **Versão**: 1.0
 
 - **Status**: ✅ Ativo e Mantido
 
