@@ -276,8 +276,9 @@ class WikipediaApp(ctk.CTk):
             self.resultado_texto.insert("1.0", f"❌ Erro ao buscar: {str(e)}")
         
         finally:
-            self.buscando = False   
-    # def copiar_texto(self):
+            self.buscando = False  
+
+    def copiar_texto(self):
     #     try:
     #         texto = self.resultado_texto.get("1.0", tk.END).strip()
     #         if texto:
