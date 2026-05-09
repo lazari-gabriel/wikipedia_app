@@ -141,7 +141,7 @@ class WikipediaApp(ctk.CTk):
                 height=32,
                 corner_radius=12,
                 font=("Arial", 11, "bold"),
-                #command=lambda termo=nome_busca:,
+                command=lambda termo=nome_busca: self.busca_rapida(termo),
                 hover_color="#144870",
                 border_width=1,
                 border_color=ctk.ThemeManager.theme["CTkButton"]["fg_color"]
@@ -188,7 +188,8 @@ class WikipediaApp(ctk.CTk):
             btn_frame,
             text="📋 Copiar Texto",
             height=30,
-            font=("Arial", 12, "bold")
+            font=("Arial", 12, "bold"),
+            command=self.copiar_texto
         )
         copiar_btn.pack(side="left", padx=5)
         
@@ -197,7 +198,8 @@ class WikipediaApp(ctk.CTk):
             btn_frame,
             text="🗑️ Limpar",
             height=30,
-            font=("Arial", 12, "bold")
+            font=("Arial", 12, "bold"),
+            command=lambda: self.resultado_texto.delete("1.0", tk.END)
         )
         clear_btn.pack(side="left", padx=5)
     
@@ -235,7 +237,7 @@ class WikipediaApp(ctk.CTk):
                 return
             
             # Obter o primeiro resultado
-            page = wikipedia.page(resultado[0])
+            page = wikipedia.page(resultados[0])
             
             # Adicionar ao histórico em teste
             #self.add_to_history(page.title)
@@ -260,9 +262,6 @@ class WikipediaApp(ctk.CTk):
             for resultado in resultados[1:]: 
                 resultado_texto += f"{contador}. {resultado}\n"
                 contador += 1
-
-           # for i, result in enumerate(resultado[1:], 1): # Começa do segundo resultado, enumerate começa do 1
-                #resultado_texto += f"{i}. {result}\n"
             
             self.resultado_texto.delete("1.0", tk.END)
             self.resultado_texto.insert("1.0", resultado_texto)
@@ -278,14 +277,22 @@ class WikipediaApp(ctk.CTk):
         finally:
             self.buscando = False  
 
-    def copiar_texto(self):
-    #     try:
-    #         texto = self.resultado_texto.get("1.0", tk.END).strip()
-    #         if texto:
-                
-    #         else:
-               
+    def busca_rapida(self, termo):
+        """Realizar busca rápida"""
+        self.campo_busca.delete(0, tk.END)
+        self.campo_busca.insert(0, termo)
+        self.busca_wikipedia()
 
+
+    def copiar_texto(self):
+        try:
+            texto = self.resultado_texto.get("1.0", tk.END)
+            self.clipboard_clear()
+            self.clipboard_append(texto)
+            messagebox.showinfo("Sucesso", "Texto copiado para a área de transferência!")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao copiar: {e}")
+               
 
 if __name__ == "__main__":
     app = WikipediaApp()
